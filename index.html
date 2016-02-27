@@ -90,11 +90,54 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="Starting-my-new-study-road"><a href="#Starting-my-new-study-road" class="headerlink" title="Starting my new study road"></a>Starting my new study road</h3>
+        <h2 id="Starting-my-new-study-road"><a href="#Starting-my-new-study-road" class="headerlink" title="Starting my new study road"></a>Starting my new study road</h2><h3 id="weichat公共平台接入服务器"><a href="#weichat公共平台接入服务器" class="headerlink" title="weichat公共平台接入服务器"></a>weichat公共平台接入服务器</h3><blockquote>
+<p>一.在开始接入之前你需要有以下准备</p>
+</blockquote>
+<hr>
+<ul>
+<li>[x] 一个新浪SAE账号 <a href="http://www.sinacloud.com/doc/sae/php/memcache.html" target="_blank" rel="external">新浪云</a><blockquote>
+<p>新浪SAE：<br>  作为一个常识来做微信开发者的人来说亦或者是做过网站开发，即使是一个简单的个人博客，我想已经对服务器有了初步的认识，这里对于服务器不做过多的解释，我们要使用的新浪SAE并不是云服务器而是一种新浪云提供的应用引擎服务，是分布式Web应用/业务开发托管、运行平台，这可能宁人费解，我们姑且就将他理解为微信开发所必须的后台服务器，它会是我们开发的必要工具。它可以被免费试用，当你实名认证后你会获得更多的使用权限。我建议初学者使用这样一个免费的平台去做微信开发的学习；对于是否存在其他平台答案是肯定的，例如百度的BAE!就个人而言更习惯于使用新浪SAE，所以本文的所有内容都在新浪SAE的基础上展开的。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<ul>
+<li>[x] 一个微信测试账号 可通过这里获取<a href="http://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">微信公众平台接口测试帐号申请</a><blockquote>
+<p>提交代码的工具SVN和编辑器：<br>我想说明的是这个提交代码的工具以及编辑器并不是必须的，你当然也可以在SAE的管理界面直接用其网页版的编辑器去编写你的代码，如有需要使用该工具的读者可以自行查找相关资料，我也会在一段时间以后专门来解释这个工具的使用。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<ul>
+<li>[x] 一部安装有微信的手机<blockquote>
+<p>相信壮这个是每个人都具备，如果确实没有，也可以使用网页版微信</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<ul>
+<li>[ ] 提交代码的工具SVN</li>
+<li>[ ] 一个文本编辑器<blockquote>
+<p>提交代码的工具SVN和编辑器：<br>我想说明的是这个提交代码的工具以及编辑器并不是必须的，你当然也可以在SAE的管理界面直接用其网页版的编辑器去编写你的代码，如有需要使用该工具的读者可以自行查找相关资料，我也会在一段时间以后专门来解释这个工具的使用。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<hr>
+<blockquote>
+<p>二.当你完成上面这些东西的时候我们就可以朝着下一步进发了</p>
+<p>1.在新浪中进入新浪云SAE并创建一个新应用<br>2.创建应用时切记创建PHP5.3下的空应用<br>3.创建完成后进入该应用，点击代码管理，创建版本。此后的许多操作将在这个版本处实施。<br>ps:4.你可以在创建完版本后点击编辑代码进入代码编辑页面（如果你没有其他任何一种编辑手段）</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>三.实现接入<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">define(<span class="string">"TOKEN"</span>,<span class="string">"weixin"</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">'echostr'</span>]))</span><br><span class="line">&#123;   </span><br><span class="line">    <span class="comment">//调用响应消息函数</span></span><br><span class="line">    responseMsg();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//实现网址接入，调用验证消息</span></span><br><span class="line">    valid();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//验证消息</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">valid</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (checkSignature()) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$echostr</span> = <span class="variable">$_GET</span>[<span class="string">'echostr'</span>];</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$echostr</span>;</span><br><span class="line">        <span class="keyword">exit</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"接入失败"</span>;</span><br><span class="line">        <span class="keyword">exit</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkSignature</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">        <span class="variable">$signature</span> = <span class="variable">$_GET</span>[<span class="string">'signature'</span>];</span><br><span class="line">        <span class="variable">$timestamp</span> = <span class="variable">$_GET</span>[<span class="string">'timestamp'</span>];</span><br><span class="line">        <span class="variable">$nonce</span> = <span class="variable">$_GET</span>[<span class="string">'nonce'</span>];</span><br><span class="line"></span><br><span class="line">        <span class="variable">$token</span> = TOKEN;</span><br><span class="line"></span><br><span class="line">        <span class="variable">$tmpArr</span> = <span class="keyword">array</span>(<span class="variable">$token</span>, <span class="variable">$timestamp</span>, <span class="variable">$nonce</span>);</span><br><span class="line">        <span class="comment">// use SORT_STRING rule</span></span><br><span class="line">        sort(<span class="variable">$tmpArr</span>, SORT_STRING);</span><br><span class="line">        <span class="variable">$tmpStr</span> = implode( <span class="variable">$tmpArr</span> );</span><br><span class="line">        <span class="variable">$tmpStr</span> = sha1( <span class="variable">$tmpStr</span> );</span><br><span class="line">                </span><br><span class="line">        <span class="keyword">if</span>( <span class="variable">$tmpStr</span> == <span class="variable">$signature</span> )&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>注意：这段代码你可能没有看懂，但是我可以告诉你这段代码的作用是和微信对暗号以表明这个服务器是属于开发者的可控的正常服务器，请微信允许我建立这个服务器与微信服务器间的连接关系！，然后我会引入一个很重要的东西，以及详细解释这段代码的实现逻辑过程！</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cil2fq09h0005psdgs3fr9nvj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cil57rm1i0005lwdgca8ll2n4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -136,7 +179,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cil2fq06g0000psdg2lekhl39" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cil57rlwb0000lwdg218sri9h" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客，文章/">博客，文章</a></li></ul>
@@ -183,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cil2fq09x0006psdgs2guoa0j" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cil57rm2t0006lwdg3c0ekbw5" class="article-share-link">Share</a>
       
       
     </footer>
