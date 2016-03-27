@@ -95,15 +95,18 @@
 <li><p>什么是NDIS <a href="http://blog.csdn.net/haolipengzhanshen/article/details/42266125" target="_blank" rel="external">NDIS驱动结构</a><br>  NDIS（Network Driver Interface Specification） 是网络驱动接口规范的简称，最初由 Microsoft 和 3Com 公司联合开发，通过对网络硬件设备的抽象与封装，规范并简化了网络驱动程序的编写，作为基本网络通信接口框架广泛应用于各类Windows 操作系统。<br>  它在网络驱动的内部进行深层次化抽象，将负责控制网络硬件设备的底层微端口驱动与上层传输驱动分离开来，同时支持在微端口驱动与协议驱动之间插入中间层驱动，从而为系统的网络通信功能提供了广泛的硬件适应性和良好的协议可拓展性。<br>  <img src="http://www.qiandipy.wang/NDISpic.png" alt=""></p>
 <p>  简单的说相对于下层微端口驱动，中间层驱动扮演者上层传输驱动的角色，而相对于上层传输驱动扮演着下层微端口驱动的角色；再从报文传输的角度看这对关系，当信息从下层微端口驱动发送过来时，本来应该是真是的上层传输驱动接收这些信息，但是此时存在中间层驱动“假冒”上层传输驱动接收了这些信息，然后再“伪装”成微端口驱动的样子向真实的上层传输驱动发送这些报文，这样报文就可以顺利到达该到的地方，只不过经历了中间层驱动这个环节！希望我已经解释清楚这些东西！</p>
 </li>
-<li><p>NDIS中间层驱动可以用来干什么的<br>  -正是由于NDIS中间层驱动处于的特殊位置，使其可以发挥特殊的作用，如防火墙等，主要是通过计算机传输报文时经过NDIS中间层驱动的时机来实现一系列工作，如过滤报文信息，通过分析报文的IP、MAC地址等获取报文的基本信息，甚至可以直接分析报文的详细数据信息、重新组装报文、伪造报文等等来实现我们需要的功能<br>  下面看一下用结构体定义的报文首部的组成</p>
+<li><p>NDIS中间层驱动可以用来干什么的<br>  正是由于NDIS中间层驱动处于的特殊位置，使其可以发挥特殊的作用，如防火墙等，主要是通过计算机传输报文时经过NDIS中间层驱动的时机来实现一系列工作，如过滤报文信息，通过分析报文的IP、MAC地址等获取报文的基本信息，甚至可以直接分析报文的详细数据信息、重新组装报文、伪造报文等等来实现我们需要的功能</p>
+<p>  下面看一下用结构体定义的报文首部的组成</p>
   <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> _iphdr <span class="comment">//定义IP首部</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> h_lenver; <span class="comment">//4位首部长度+4位IP版本号</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> tos; <span class="comment">//8位服务类型TOS</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> total_len; <span class="comment">//16位总长度（字节）</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> ident; <span class="comment">//16位标识</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> frag_and_flags; <span class="comment">//3位标志位</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> ttl; <span class="comment">//8位生存时间 TTL</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> proto; <span class="comment">//8位协议 (TCP, UDP 或其他)</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> checksum; <span class="comment">//16位IP首部校验和</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> sourceIP; <span class="comment">//32位源IP地址</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> destIP; <span class="comment">//32位目的IP地址</span></span><br><span class="line">&#125;IP_HEADER;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> psd_hdr <span class="comment">//定义TCP伪首部</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> saddr; <span class="comment">//源地址</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> daddr; <span class="comment">//目的地址</span></span><br><span class="line"><span class="keyword">char</span> mbz;</span><br><span class="line"><span class="keyword">char</span> ptcl; <span class="comment">//协议类型</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">short</span> tcpl; <span class="comment">//TCP长度</span></span><br><span class="line">&#125;PSD_HEADER;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> _tcphdr <span class="comment">//定义TCP首部</span></span><br><span class="line">&#123;</span><br><span class="line">USHORT th_sport; <span class="comment">//16位源端口</span></span><br><span class="line">USHORT th_dport; <span class="comment">//16位目的端口</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> th_seq; <span class="comment">//32位序列号</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> th_ack; <span class="comment">//32位确认号</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> th_lenres; <span class="comment">//4位首部长度/6位保留字</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> th_flag; <span class="comment">//6位标志位</span></span><br><span class="line">USHORT th_win; <span class="comment">//16位窗口大小</span></span><br><span class="line">USHORT th_sum; <span class="comment">//16位校验和</span></span><br><span class="line">USHORT th_urp; <span class="comment">//16位紧急数据偏移量</span></span><br><span class="line">&#125;TCP_HEADER;</span><br><span class="line"><span class="comment">// 这里只是数据头, 但头最能让你看清报文是啥东东</span></span><br><span class="line"><span class="comment">// IP_HEADER::total_len 指明了实体数据(也就是真正的消息内容)长度.</span></span><br><span class="line"><span class="comment">// 其他以此类推</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>我在用NDIS做什么：<br>  对博主来说这完全是一个新的领域，这是我第一次使用C语言来开发一个产品，我们将其命名为基于NDIS中间层驱动的主动安全防护，很开心我还有俩个小伙伴，他们都很优秀，我相信这将是我们每个人的一次进步，这样的日子我想不久就会充满着我每天的生活！</p>
 </li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/26/windows驱动开发学习/" data-id="cimaf1itw0003hsdgaffz394a" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/26/windows驱动开发学习/" data-id="cimafelge0003ysdgt8jiyu2f" class="article-share-link">Share</a>
       
       
     </footer>
@@ -160,7 +163,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cimaf1iu50004hsdgbe4wnkqq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cimafelge0004ysdgpae7i6b2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -202,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cimaf1iqz0000hsdgr37nb901" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cimafeleo0000ysdgnynpam58" class="article-share-link">Share</a>
       
       
     </footer>
@@ -247,7 +250,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cimaf1iue0005hsdgseuj04ax" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cimafelgu0005ysdgohgrvs7j" class="article-share-link">Share</a>
       
       
     </footer>
