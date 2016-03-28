@@ -97,12 +97,12 @@
 <p>只要CPU的IRQL级别不高于APC_LEVEl的层次，其代码都是允许倒换的，但是从DISPATCH_LEVEL就不允许了。在这一点上搞错了，后果是很严重的。所以在管理层面的代码中几乎每个函数的开头都要加上一个宏操作PAGED_CODE()说明代码作者的意图是让这个函数所占的页面可以被倒换出去。这个宏的定义如下</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">ifdef</span> DBG</span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> PAGED_CODE()&#123;\</span><br><span class="line">    <span class="keyword">if</span>(KeGetCurrentIrql()&gt;APC_LEVEL)&#123;\</span><br><span class="line">        KdPrint(<span class="string">"NTDDK:Pageable code called at IRQL&gt;APC_LEVEL(%d)\n"</span>,</span></span><br><span class="line">                                                    KeGetCurrentIrql());\</span><br><span class="line">        ASSERT(FALSE);\</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="preprocessor">#<span class="keyword">else</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">define</span> PAGED_CODE()</span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 <p>当然，光是在代码中引用宏操作PAGED_CODE()不会使一个函数所在的页面可倒换，真正使其可倒换的是编译指示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#pragma alloc_text()</span><br></pre></td></tr></table></figure></p>
-<p>例如NtQureyObject()中的第一行就是PAGED_CODE(),与此相应，这个函数所在的源文件里有这么一行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">##pragma alloc_text(PAGE,NtQureyObject)</span><br></pre></td></tr></table></figure></p>
+<p>例如NtQureyObject()中的第一行就是PAGED_CODE(),与此相应，这个函数所在的源文件里有这么一行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#pragma alloc_text(PAGE,NtQureyObject)</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/28/windows-内核/" data-id="cimc4qz4g0004h0dgo56n3jsu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/28/windows-内核/" data-id="cimc4sl3v0004i0dgnbk1sd49" class="article-share-link">Share</a>
       
       
     </footer>
@@ -150,7 +150,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/26/windows驱动开发学习/" data-id="cimc4qz410003h0dg3bt2qdvz" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/26/windows驱动开发学习/" data-id="cimc4sl3g0003i0dg5nzi1wz7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -207,7 +207,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cimc4qz4g0005h0dgzf49i616" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/25/study-like-sleep/" data-id="cimc4sl3v0005i0dgshcdpd29" class="article-share-link">Share</a>
       
       
     </footer>
@@ -249,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cimc4qz2a0000h0dggtsgpb2n" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/19/在绝望中寻找希望/" data-id="cimc4sl190000i0dgko7oj2t5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -294,7 +294,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cimc4qz4w0006h0dg6inee15x" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/02/18/hello-world/" data-id="cimc4sl4q0006i0dglho3a3r1" class="article-share-link">Share</a>
       
       
     </footer>
